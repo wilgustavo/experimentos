@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  prism:
+    image: stoplight/prism
+    command: 'mock -h 0.0.0.0 /tmp/users.yaml'
+    volumes:
+      - ./src/users.yaml:/tmp/users.yaml:ro
+    ports:
+      - '4010:4010'

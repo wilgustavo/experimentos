@@ -1,0 +1,145 @@
+openapi: '3.0.1'
+info:
+  title: API de usuarios
+  description: |
+    Servicios para crear y consultar usuarios
+  version: 1.0.0
+tags:
+  - name: Usuarios
+    description: Servicios de usuarios
+paths:
+  /usuarios:
+    post:
+      tags: 
+        - Usuarios
+      summary: Crear usuario
+      description: Ingresar datos para crear una cuenta de usuario
+      operationId: crearUsuario
+      requestBody: 
+        description: Datos de la cuenta de usuario
+        required: true
+        content: 
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '201':
+          description: Usuario creado
+          headers:
+            Location:
+              $ref: '#/components/headers/UserLocation'
+        '422':
+          description: Error de validación de datos  
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Error'
+              examples:
+                ErrorValidacion:
+                  $ref: '#/components/examples/MensajeError'
+  /usuarios/{usuario}:
+    get:
+      tags: 
+        - Usuarios
+      summary: Consultar usuario
+      description: |
+         Consultar los datos de un usuario ingresando el nombre 
+         de cuenta de usuario
+      operationId: consultarUsuario
+      parameters: 
+        - name: usuario
+          in: path
+          required: true
+          description: nombre de cuenta de usuario
+          schema: 
+            type: string
+            maxLength: 50
+            example: homer
+      responses: 
+        '200':
+          description: Retorna los datos de un usuario
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Usuario'
+              examples: 
+                UsuarioSinTelefono:
+                  $ref: '#/components/examples/UsuarioSinTelefono' 
+                UsuarioConTelefono:
+                  $ref: '#/components/examples/UsuarioConTelefono'
+        '404':
+          description: No se encuentra el usuario
+components:
+  headers: 
+    UserLocation:
+      description: |
+        Retorna la URL donde se puede consultar los datos del usuario
+      schema: 
+        type: string
+        format: uri
+      example: http://localhost:8080/usuarios/homer
+  schemas: 
+    Usuario:
+      type: object
+      properties:
+        nombre:
+          type: string
+          maxLength: 100
+          description: Nombre del usuario
+          example: Homer
+        apellido:
+          type: string
+          maxLength: 100
+          description: Apellido del usuario
+          example: Simpson
+        usuario:
+          type: string
+          maxLength: 50
+          description: Nombre de la cuenta de usuario
+          example: homer
+        email:
+          type: string
+          format: email
+          maxLength: 200
+          description: Email del usuario
+          example: homer@email.com
+        telefono:
+          type: string
+          maxLength: 20
+          pattern: '^\(?\d{2,3}\)?[\s]?\d{3,8}$'
+          description: Teléfono del usuario
+          example: (123)45147787
+      required:
+        - nombre
+        - apellido
+        - usuario
+        - email
+    Error:
+      type: object
+      properties:
+        mensaje:
+          type: string
+          description: Mensaje de error
+  examples: 
+    MensajeError:
+      summary: Error de validación
+      description: Mensaje de error de validación de datos
+      value:
+        mensaje: Se encontraron errores al procesar los datos
+    UsuarioSinTelefono:
+      summary: Datos sin teléfono
+      description: Datos de un usuario que no tiene número de teléfono
+      value:
+        nombre: Homer
+        apellido: Simpson
+        usuario: homer
+        email: homer@email.com
+    UsuarioConTelefono:
+      summary: Datos con teléfono
+      description: Datos de un usuario que incluye número de teléfono
+      value:
+        nombre: Cosme
+        apellido: Fulanito
+        usuario: cosme
+        email: cosme@email.com
+        telefono: (110)45156544

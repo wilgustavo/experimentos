@@ -1,0 +1,34 @@
+
+
+### Ejemplo con teléfono no válido
+
+POST http://localhost:4010/usuarios
+Content-Type: application/json
+    
+{
+    "usuario": "homer",
+    "nombre": "Homer",
+    "apellido": "Simpson",
+    "email": "homer@email.com",
+    "telefono": "454-454"
+}
+
+### Ejemplo OK
+POST http://localhost:4010/usuarios
+Content-Type: application/json
+    
+{
+    "usuario": "homer",
+    "nombre": "Homer",
+    "apellido": "Simpson",
+    "email": "homer@email.com"
+}
+
+### Consultar datos de un usuario 
+
+GET http://localhost:4010/usuarios/homer
+
+### Consultar datos de un usuario con teléfono
+
+GET http://localhost:4010/usuarios/homer
+Prefer: example=UsuarioConTelefono
