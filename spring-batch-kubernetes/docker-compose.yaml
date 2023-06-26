@@ -1,0 +1,35 @@
+
+version: '3.8'
+services:
+  mariadb:
+    image: mariadb:10.11.4
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=abc123
+      - MYSQL_DATABASE=prueba
+      - MYSQL_USER=spring
+      - MYSQL_PASSWORD=spring
+    ports:
+      - 3306:3306
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+
+  batch:
+    build:
+      context: .
+    container_name: spring-batch
+    restart: on-failure
+    environment:
+      - MDB_HOST=mariadb
+      - MDB_DATABASE=prueba
+      - MDB_USER=spring
+      - MDB_PASS=spring
+    volumes:
+      - ./data:/tmp
+    command:
+      - --spring.batch.job.name=import-book
+      - path=/tmp/books.csv
+
+
+
+
