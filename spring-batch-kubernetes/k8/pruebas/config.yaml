@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: file-data
+data:
+  file1.txt: |
+    This is a file
+    with multiple lines
+    and some special characters
+  file2.txt: |
+    This is another file
+    with multiple lines
+    and some special characters

@@ -1,0 +1,22 @@
+apiVersion: mariadb.mmontes.io/v1alpha1
+kind: SqlJob
+metadata:
+  name: sql-books
+  namespace: books
+spec:
+  mariaDbRef:
+    name: mariadb
+  username: root
+  passwordSecretKeyRef:
+    name: mariadb-secret
+    key: root-password
+  database: books
+  sql: |
+    CREATE TABLE BOOK ( 
+      BOOK_ID BIGINT  NOT NULL PRIMARY KEY ,
+      TITLE VARCHAR(500),
+      AUTHORS VARCHAR(1000),
+      ISBN13 CHAR(13),
+      PUBLICATION DATE,
+      PUBLISHER VARCHAR(100)
+    ) ENGINE=InnoDB;

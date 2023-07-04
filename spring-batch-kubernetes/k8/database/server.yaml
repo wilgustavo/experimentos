@@ -1,0 +1,55 @@
+apiVersion: mariadb.mmontes.io/v1alpha1
+kind: MariaDB
+metadata:
+  name: mariadb
+  namespace: books
+spec:
+  rootPasswordSecretKeyRef:
+    name: mariadb-secret
+    key: root-password
+  image:
+    repository: mariadb
+    tag: "10.11.3"
+    pullPolicy: IfNotPresent
+  port: 3306
+  volumeClaimTemplate:
+    resources:
+      requests:
+        storage: 100Mi
+    storageClassName: standard
+    accessModes:
+      - ReadWriteOnce
+  myCnfConfigMapKeyRef:
+    name: mariadb-config
+    key: config
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 512Mi
+      cpu: 300m
+  podSecurityContext:
+    runAsUser: 0
+  securityContext:
+    allowPrivilegeEscalation: false
+  livenessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 5
+    exec:
+      command:
+        - bash
+        - -c
+        - mysql -u root -p"${MARIADB_ROOT_PASSWORD}" -e "SELECT 1;"
+  readinessProbe:
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 5
+    exec:
+      command:
+        - bash
+        - -c
+        - mysql -u root -p"${MARIADB_ROOT_PASSWORD}" -e "SELECT 1;"         
+  service:
+    type: ClusterIP   

@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-load-book
+  namespace: books
+spec:
+  backoffLimit: 0
+  parallelism: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: books
+          image: books:0.1
+          env:
+            - name: MDB_HOST
+              value: mariadb.books
+            - name: MDB_DATABASE
+              value: books
+            - name: MDB_USER
+              value: spring
+            - name: MDB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: user-password
+          args:
+            - --spring.batch.job.name=import-book
+            - path=/tmp/books.csv
+          volumeMounts:
+            - name: file-volume
+              mountPath: /tmp  
+      volumes:
+        - name: file-volume
+          configMap:
+            name: csv-file
+            items:
+              - key: books.csv
+                path: books.csv

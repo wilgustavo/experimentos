@@ -1,0 +1,22 @@
+# pod con bussybox
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bussybox
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu:22.04
+    command: ["/bin/sh", "-c", "sleep infinity"]
+    volumeMounts:
+    - name: file-volume
+      mountPath: /tmp
+  volumes:
+  - name: file-volume
+    configMap:
+      name: file-data
+      items:
+      - key: file1.txt
+        path: file1.txt
+      - key: file2.txt
+        path: file2.txt
